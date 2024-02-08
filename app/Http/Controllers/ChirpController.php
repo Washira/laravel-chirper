@@ -64,13 +64,11 @@ class ChirpController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Chirp $chirp): RedirectResponse
+    public function update(MessageRequest $request, Chirp $chirp): RedirectResponse
     {
         $this->authorize('update', $chirp);
 
-        $validated = $request->validate([
-            'message' => 'required|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $chirp->update($validated);
 
@@ -82,6 +80,10 @@ class ChirpController extends Controller
      */
     public function destroy(Chirp $chirp)
     {
-        //
+        $this->authorize('delete', $chirp);
+
+        $chirp->delete();
+
+        return redirect()->route('chirps.index');
     }
 }
